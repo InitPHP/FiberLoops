@@ -39,9 +39,27 @@ class Loop
         }
     }
 
-    public function defer(callable $callable): void
+    public function await(callable|Fiber $fiber): mixed
     {
-        $this->callStack[] = new Fiber($callable);
+        if(!($fiber instanceof Fiber)){
+            $fiber = new Fiber($fiber);
+        }
+        $fiber->start();
+        while ($fiber->isTerminated() === FALSE) {
+            $fiber->resume();
+
+            if(!$fiber->isTerminated()){
+                Fiber::suspend();
+            }else{
+                break;
+            }
+        }
+        return $fiber->getReturn();
+    }
+
+    public function defer(callable|Fiber $fiber): void
+    {
+        $this->callStack[] = ($fiber instanceof Fiber) ? $fiber : new Fiber($fiber);
     }
 
     public function run()
