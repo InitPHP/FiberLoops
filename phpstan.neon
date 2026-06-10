@@ -1,0 +1,11 @@
+parameters:
+    level: 8
+    paths:
+        - src
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        # PHP's native Fiber is generic (Fiber<TStart, TResume, TReturn, TSuspend>).
+        # The loop intentionally accepts any fiber and constrains none of these
+        # parameters, so parametrising every signature would add noise, not safety.
+        -
+            identifier: missingType.generics

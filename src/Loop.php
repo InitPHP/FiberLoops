@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Loop.php
  *
@@ -7,7 +8,6 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2022 Muhammet ŞAFAK
  * @license    ./LICENSE  MIT
- * @version    1.0
  * @link       https://www.muhammetsafak.com.tr
  */
 
@@ -15,74 +15,141 @@ declare(strict_types=1);
 
 namespace InitPHP\FiberLoops;
 
-use \Fiber;
+use Fiber;
+use InitPHP\FiberLoops\Exception\LoopException;
 
 use function microtime;
 
-class Loop
+/**
+ * A minimal cooperative task scheduler built on PHP fibers.
+ *
+ * Queue tasks with {@see Loop::defer()} and drive them with {@see Loop::run()}.
+ * Each task is a {@see Fiber}; the loop advances them round-robin, running each
+ * until it yields ({@see Loop::next()} / {@see Loop::sleep()}) or terminates.
+ *
+ * Scheduling is cooperative: there is no preemption. A task keeps the loop until
+ * it yields or returns, so long-running tasks must call {@see Loop::next()}
+ * periodically to let siblings progress.
+ *
+ * ```php
+ * $loop = new Loop();
+ * $loop->defer(function () use ($loop) {
+ *     foreach (range(1, 3) as $n) {
+ *         echo "a$n";
+ *         $loop->next();
+ *     }
+ * });
+ * $loop->defer(function () use ($loop) {
+ *     foreach (range(1, 3) as $n) {
+ *         echo "b$n";
+ *         $loop->next();
+ *     }
+ * });
+ * $loop->run(); // a1b1a2b2a3b3
+ * ```
+ */
+final class Loop implements LoopInterface
 {
+    /**
+     * The round-robin queue of scheduled tasks.
+     *
+     * @var array<int, Fiber>
+     */
+    private array $queue = [];
 
-    public function __construct(protected array $callStack = [])
+    /**
+     * {@inheritDoc}
+     */
+    public function defer(callable|Fiber $task): void
     {
+        $this->queue[] = $task instanceof Fiber ? $task : new Fiber($task);
     }
 
-    public function next(mixed $value = null)
+    /**
+     * {@inheritDoc}
+     */
+    public function run(): void
     {
+        while ($this->queue !== []) {
+            foreach ($this->queue as $id => $fiber) {
+                $this->tick($id, $fiber);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function next(mixed $value = null): mixed
+    {
+        if (Fiber::getCurrent() === null) {
+            throw new LoopException(
+                'Loop::next() must be called from within a fiber, '
+                . 'e.g. inside a task passed to Loop::defer() or Loop::await().',
+            );
+        }
+
         return Fiber::suspend($value);
     }
 
-    public function sleep(int|float $seconds)
+    /**
+     * {@inheritDoc}
+     */
+    public function sleep(int|float $seconds): void
     {
-        $stop = microtime(true) + (float)$seconds;
-        while (microtime(true) < $stop) {
+        $until = microtime(true) + $seconds;
+        while (microtime(true) < $until) {
             $this->next();
         }
     }
 
-    public function await(callable|Fiber $fiber): mixed
+    /**
+     * {@inheritDoc}
+     */
+    public function await(callable|Fiber $task): mixed
     {
-        if(!($fiber instanceof Fiber)){
-            $fiber = new Fiber($fiber);
-        }
-        $fiber->start();
-        while ($fiber->isTerminated() === FALSE) {
-            $fiber->resume();
+        $fiber = $task instanceof Fiber ? $task : new Fiber($task);
 
-            if(!$fiber->isTerminated()){
+        if (!$fiber->isStarted()) {
+            $fiber->start();
+        }
+
+        // When awaiting from inside a fiber we yield to the scheduler before each
+        // step so sibling tasks keep running; the loop only ever resumes $fiber,
+        // so it can never be terminated at the point we resume it.
+        $insideFiber = Fiber::getCurrent() !== null;
+        while (!$fiber->isTerminated()) {
+            if ($insideFiber) {
                 Fiber::suspend();
-            }else{
-                break;
             }
+            $fiber->resume();
         }
+
         return $fiber->getReturn();
     }
 
-    public function defer(callable|Fiber $fiber): void
+    /**
+     * Advance a single queued task by one step.
+     *
+     * Starts it if it has not started, resumes it if it is suspended, or removes
+     * it from the queue once it has terminated.
+     *
+     * @param int   $id    The task's key in the queue.
+     * @param Fiber $fiber The task to advance.
+     * @return void
+     */
+    private function tick(int $id, Fiber $fiber): void
     {
-        $this->callStack[] = ($fiber instanceof Fiber) ? $fiber : new Fiber($fiber);
-    }
-
-    public function run()
-    {
-        while ($this->callStack != []) {
-            foreach ($this->callStack as $id => $fiber) {
-                $this->callFiber($id, $fiber);
-            }
-        }
-    }
-
-    protected function callFiber(int $id, Fiber $fiber)
-    {
-        if($fiber->isStarted() === FALSE){
-            return $fiber->start($id);
+        if (!$fiber->isStarted()) {
+            $fiber->start();
+            return;
         }
 
-        if($fiber->isTerminated() === FALSE){
-            return $fiber->resume();
+        if (!$fiber->isTerminated()) {
+            $fiber->resume();
+            return;
         }
 
-        unset($this->callStack[$id]);
-        return $fiber->getReturn();
+        unset($this->queue[$id]);
     }
-
 }
