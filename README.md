@@ -1,6 +1,6 @@
 # InitPHP FiberLoops
 
-[![Designed & Maintained with Tan](https://www.muhammetsafak.com.tr/badges/designed-maintained-with-tan.svg)](https://www.muhammetsafak.com.tr/en/tan/)
+[![Designed & Maintained with Tan](https://muhammetsafak.com/badges/designed-maintained-with-tan.svg)](https://muhammetsafak.com/tan/)
 [![CI](https://github.com/InitPHP/FiberLoops/actions/workflows/ci.yml/badge.svg)](https://github.com/InitPHP/FiberLoops/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![PHP Version](https://img.shields.io/badge/php-%E2%89%A5%208.1-777bb4.svg)](composer.json)
@@ -240,7 +240,7 @@ Fork, branch, add tests for your change, and open a pull request.
 
 ## Credits
 
-- [Muhammet ŞAFAK](https://www.muhammetsafak.com.tr) <<info@muhammetsafak.com.tr>>
+- [Muhammet ŞAFAK](https://muhammetsafak.com) <<info@muhammetsafak.com>>
 
 ## License
 
