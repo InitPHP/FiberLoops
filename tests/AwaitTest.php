@@ -14,15 +14,14 @@ final class AwaitTest extends TestCase
     {
         $loop = new Loop();
 
-        $this->assertSame(42, $loop->await(fn (): int => 42));
+        $this->assertSame(42, $loop->await(fn(): int => 42));
     }
 
     public function test_await_returns_null_when_the_task_returns_nothing(): void
     {
         $loop = new Loop();
 
-        $this->assertNull($loop->await(function (): void {
-        }));
+        $this->assertNull($loop->await(function (): void {}));
     }
 
     public function test_await_drives_a_task_that_suspends_once_from_the_main_context(): void
@@ -78,7 +77,7 @@ final class AwaitTest extends TestCase
     public function test_await_accepts_an_unstarted_fiber_instance(): void
     {
         $loop = new Loop();
-        $fiber = new Fiber(fn (): string => 'fiber-value');
+        $fiber = new Fiber(fn(): string => 'fiber-value');
 
         $this->assertSame('fiber-value', $loop->await($fiber));
     }

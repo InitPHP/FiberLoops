@@ -3,7 +3,7 @@
 [![Designed & Maintained with Tan](https://muhammetsafak.com/badges/designed-maintained-with-tan.svg)](https://muhammetsafak.com/tan/)
 [![CI](https://github.com/InitPHP/FiberLoops/actions/workflows/ci.yml/badge.svg)](https://github.com/InitPHP/FiberLoops/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![PHP Version](https://img.shields.io/badge/php-%E2%89%A5%208.1-777bb4.svg)](composer.json)
+[![PHP Version](https://img.shields.io/badge/php-%E2%89%A5%208.2-777bb4.svg)](composer.json)
 
 > A **minimal cooperative task scheduler** for PHP, built on native
 > [fibers](https://www.php.net/manual/en/language.fibers.php). Run several tasks
@@ -27,7 +27,7 @@ can build those things on top of, not a full async runtime like ReactPHP or Amp.
 
 ## Requirements
 
-- PHP **8.1+** (fibers are a core language feature since 8.1 — no extension needed)
+- PHP **8.2+** (fibers are a core language feature since 8.1 — no extension needed)
 
 ## Installation
 
