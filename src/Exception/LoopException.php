@@ -25,6 +25,4 @@ use RuntimeException;
  * otherwise surface a bare {@see \FiberError}; this exception wraps that
  * precondition in a package-namespaced type with an actionable message.
  */
-class LoopException extends RuntimeException
-{
-}
+class LoopException extends RuntimeException {}
