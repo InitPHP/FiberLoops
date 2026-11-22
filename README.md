@@ -148,7 +148,7 @@ $loop->run();
 The second task finishes first because the first one is sleeping. `sleep()` is a
 **busy-wait** that yields on every iteration: siblings progress, but the loop
 does not idle the CPU. `sleep(0)` (or any non-positive value) returns immediately
-without yielding. See [docs/caveats.md](docs/caveats.md) for the implications.
+without yielding. See [docs/Caveats-and-Limitations.md](docs/Caveats-and-Limitations.md) for the implications.
 
 ### `await()`
 
@@ -217,11 +217,19 @@ Full guides live in [`docs/`](docs/):
 
 | Guide | What it covers |
 | ----- | -------------- |
-| [Getting started](docs/getting-started.md) | Install, your first two tasks, how the loop runs them. |
-| [Concepts](docs/concepts.md) | The scheduling model: fibers, the round-robin queue, cooperative yielding. |
-| [API reference](docs/api/README.md) | Every method, its signature, behaviour and edge cases. |
-| [await & concurrency](docs/await-and-concurrency.md) | Awaiting sub-tasks from the main context and from inside a task. |
-| [Caveats & gotchas](docs/caveats.md) | Busy-wait `sleep()`, in-fiber preconditions, non-preemptive scheduling. |
+| [Home](docs/Home.md) | What FiberLoops is and is not, and where to start. |
+| [Installation](docs/Installation.md) | Requirements, Composer, a smoke test. |
+| [Quick Start](docs/Quick-Start.md) | Your first two tasks, `sleep()` and `await()`. |
+| [Core Concepts](docs/Core-Concepts.md) | The scheduling model: fibers, the round-robin queue, cooperative yielding. |
+| [Deferring & Running Tasks](docs/Deferring-and-Running-Tasks.md) | `defer()` and `run()` in depth. |
+| [Yielding & Sleeping](docs/Yielding-and-Sleeping.md) | `next()` and `sleep()`, including the busy-wait. |
+| [Awaiting Results](docs/Awaiting-Results.md) | Awaiting sub-tasks from the main context and from inside a task. |
+| [Error Handling](docs/Error-Handling.md) | `LoopException` and exceptions thrown inside tasks. |
+| [Recipes](docs/Recipes.md) | Producer/consumer, graceful shutdown, collecting results. |
+| [Testing](docs/Testing.md) | Testing the package and your own loop code. |
+| [Caveats & Limitations](docs/Caveats-and-Limitations.md) | Busy-wait `sleep()`, in-fiber preconditions, non-preemptive scheduling. |
+| [API Reference](docs/API-Reference.md) | Every method, its signature, behaviour and edge cases. |
+| [FAQ](docs/FAQ.md) / [Troubleshooting](docs/Troubleshooting.md) | Common questions and symptoms with fixes. |
 
 ## Testing
 
