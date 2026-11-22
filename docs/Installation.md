@@ -72,8 +72,8 @@ If you see that line, you are ready for the [Quick Start](Quick-Start.md).
 
 ## Versioning
 
-The package follows [Semantic Versioning](https://semver.org). The current
-`main` branch requires PHP 8.2+ (support for PHP 8.1 was dropped) and exposes the
+The package follows [Semantic Versioning](https://semver.org). Version
+3.0.0 and later require PHP 8.2+ (support for PHP 8.1 was dropped in 3.0.0) and expose the
 API documented throughout this wiki. See the
 [Changelog](https://github.com/InitPHP/FiberLoops/blob/main/CHANGELOG.md) for what
 changed between releases.
