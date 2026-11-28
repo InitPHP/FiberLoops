@@ -18,7 +18,7 @@ composer cs-fix      # apply PER-CS fixes
 composer ci          # cs-check + stan + test, the full local gate
 ```
 
-CI runs the same gate on PHP 8.2, 8.3, 8.4 and 8.5 (plus a lowest-dependency leg on 8.2)
+CI runs the same gate on PHP 8.2, 8.3, 8.4, 8.5 and 8.6 (plus a lowest-dependency leg on 8.2)
 on every push and pull request.
 
 ## Testing your own loop code
